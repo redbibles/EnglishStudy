@@ -16,6 +16,7 @@ TestOrder  = list(range(0,Nlines))
 TestNumber = Nlines
 Stime      = time.time()
 Qus = ''
+review = False
 
 class MyInfiniteTimer():
 
@@ -45,6 +46,7 @@ TimerThread = MyInfiniteTimer(1,TimerFunction)
 def Answer(event):
     global TestNumber
     global Qus
+    global review
 
     if TestNumber >= 5:
         TimerThread.cancel()
@@ -55,19 +57,28 @@ def Answer(event):
         Ans = AnswerEntry.get()
         Ans = Ans.rstrip()
         Qus = Qus.rstrip()
-        Ans = Ans.rstrip(' ')
-        Qus = Qus.rstrip(' ')
 
-        if(Ans == Qus):
-            TestNumber = TestNumber+1
-            print('OK')
-            Question = Qus.split(' ')
-            QuestionLabel.config(text = Question[0])
+        if (Ans == Qus):
+            if not review:
+                TestNumber = TestNumber+1
+                print('OK')
+                Question = Qus.split(' ')
+                QuestionLabel.config(text = Question[0])
+                Qus = Question[0]
+                review = True
+
+            else:
+                print('OK')
+                Qus = line[TestOrder[TestNumber]]
+                QuestionLabel.config(text=Qus)
+                review = False
+
         else:
             print('False')
+            print("Anwer was",Qus)
+            Qus = line[TestOrder[TestNumber]]
             QuestionLabel.config(text = Qus)
 
-        Qus =line[TestOrder[TestNumber]]
         AnswerEntry.delete(0,100)
 
 def Start():
